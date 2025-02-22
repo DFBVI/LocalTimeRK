@@ -967,16 +967,20 @@ bool LocalTimeSchedule::isScheduledTime(LocalTimeConvert &conv, time_t timeNow) 
 // LocalTimeScheduleManager
 //
 
-time_t LocalTimeScheduleManager::getNextTimeByName(const char *name, const LocalTimeConvert &conv) {
+time_t LocalTimeScheduleManager::getNextTimeByName(const char *name, const LocalTimeConvert &conv) const {
+    time_t nextTime = 0;
+
     for(auto it = schedules.begin(); it != schedules.end(); ++it) {
         if (it->name.equals(name)) {
             LocalTimeConvert tempConv(conv);
             if (it->getNextScheduledTime(tempConv)) {
-
+                if (nextTime == 0 || tempConv.time < nextTime) {
+                    nextTime = tempConv.time;
+                }
             }
         }
     }
-    return 0;
+    return nextTime;
 }
 
 time_t LocalTimeScheduleManager::getNextWake(const LocalTimeConvert &conv) const {
@@ -1054,6 +1058,8 @@ void LocalTimeScheduleManager::setFromJsonObject(const JSONValue &jsonObj) {
     JSONObjectIterator iter(jsonObj);
     while(iter.next()) {
         String key = (const char *)iter.name();
+
+        Log.info(key);
 
         for(auto it = schedules.begin(); it != schedules.end(); ++it) {
             if (it->name.equals(key)) {

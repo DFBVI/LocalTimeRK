@@ -1783,7 +1783,7 @@ public:
      * @param conv The LocalTimeConvert that contains the timezone information to use
      * @return time_t Time of 0 if there is no schedule with that name
      */
-    time_t getNextTimeByName(const char *name, const LocalTimeConvert &conv);
+    time_t getNextTimeByName(const char *name, const LocalTimeConvert &conv) const;
 
     /**
      * @brief Get the wake of any type (quick or full)
